@@ -45,3 +45,4 @@ else
     echo "Error: Failed to create the file at $OUTPUT_FILE." >&2
     exit 1
 fi
+
