@@ -23,7 +23,7 @@ sudo chown -R webgen:webgen /var/lib/webgen
 # -R: operate on files and directories recursively
 ```
 
-[!Question] The benefit of creating a system user for this task rather than using a regular user or root 
+The benefit of creating a system user for this task rather than using a regular user or root 
 
 There are three benefits: enhanced security, separation of concerns and principle of least privilege.
 
@@ -31,15 +31,31 @@ There are three benefits: enhanced security, separation of concerns and principl
 - Separation of concerns: system user isolates tasks so it makes logs and processes easier to manage.
 - Principle of least privilege: system user minimizes the attack surface by having only necessary permissions.
 
-[!Question] Verifying timer, check logs and service execution
+Verifying timer, check logs and service execution
 
 ```bash
 sudo systemctl status generate-index.timer # check timer status
 sudo systemctl status generate-index.service # check service status
-sudo journalctl -u generate-index.service # check logs, use --since or --until; these filter the specific period
+sudo journalctl -u generate-index.service 
+# check logs, use --since or --until; these filter the specific period
 ```
 
-[!Question] Importance of using separate block file
+Importance of using separate block file
+
+- Avoiding errors: modifying the main nginx.conf directly increases the risk of breaking entire server
+- Ease of management: individual server block files can be enabled or disabled with symbolic links, simplifying maintenance.
+
+Check nginx status and test nginx configuration
+
+```bash
+sudo systemctl status nginx # check nginx status
+sudo nginx -t # test nginx configuration
+```
+
+Check firewall status
+```bash
+sudo ufw status verbose # check firewall status
+```
 
 
 
