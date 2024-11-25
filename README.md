@@ -1,8 +1,13 @@
 # 2420 as 2 part 1
 
-# Set up a new server
+## Set up a new server
 
-## Create a new user account
+This section has three main part: creating a new user, set up nginx and set up ufw
+
+nginx will do serving static content (e.g., HTML, CSS, JS) or act as a reverse proxy for backend servers
+ufw will do seting up firewall rules, allowing only specific ports while blocking others
+
+### Create a new user account
 
 ```bash
 sudo useradd -r -m -d /var/lib/webgen -s /usr/bin/nologin webgen
@@ -21,6 +26,50 @@ sudo mkdir -p /var/lib/webgen/bin /var/lin/webgen/HTML
 sudo chown -R webgen:webgen /var/lib/webgen
 # change the directory owner and group to webgen
 # -R: operate on files and directories recursively
+```
+
+### Set up nginx
+
+```bash
+sudo pacman -Syu nginx # install nginx on Arch Linux
+
+sudo mkdir -p /etc/nginx/sites-available # create the directory for server block file
+sudo mkdir -p /etc/nginx/sites-enabled
+
+sudo nvim /etc/nginx/sites-available/webgen.conf
+
+sudo ln -s /etc/nginx/sites-available/webgen.conf /etc/nginx/sites-enabled/webgen.conf
+# create the symbolic link to enable the configuration
+```
+
+In the webgen.conf file, you need to add the text below
+
+```bash
+server {
+	listen 80;
+    	listen [::]:80;
+    
+    	server_name _;
+    
+    	root /var/lib/webgen/HTML;
+    	index index.html;
+
+		location / {
+        	try_files $uri $uri/ =404;
+    	}
+}
+```
+
+Check the main nginx.conf file
+
+```bash
+include /etc/nginx/sites-enabled/webgen.default;
+# if it's not there, add it to nginx.conf
+```
+```bash
+sudo nginx -t # test the configuration
+sudo systemctl start nginx # start nginx
+sudo systemctl status nginx # check nginx status
 ```
 
 The benefit of creating a system user for this task rather than using a regular user or root 
