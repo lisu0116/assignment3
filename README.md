@@ -4,8 +4,8 @@
 
 This section has three main part: creating a new user, set up nginx and set up ufw
 
-nginx will do serving static content (e.g., HTML, CSS, JS) or act as a reverse proxy for backend servers
-ufw will do seting up firewall rules, allowing only specific ports while blocking others
+- nginx: doing serving static content (e.g., HTML, CSS, JS) or act as a reverse proxy for backend servers
+- ufw: doing seting up firewall rules, allowing only specific ports while blocking others
 
 ### Create a new user account
 
@@ -72,15 +72,32 @@ sudo systemctl start nginx # start nginx
 sudo systemctl status nginx # check nginx status
 ```
 
-The benefit of creating a system user for this task rather than using a regular user or root 
+### Set up ufw
 
+```bash
+sudo pacman -S ufw # install ufw
+
+# set up a firewall below
+sudo ufw default deny incoming # block all incoming connections by default
+sudo ufw default allow outgoing # allow all outgoing connections
+
+sudo ufw allow ssh # allow incoming SSH connections (port 22)
+sudo ufw allow 22 # allow incoming traffic on port 22 (used for SSH)
+sudo ufw limit ssh # limit SSH connections to prevent brute force attacks 
+sudo ufw allow http # allow incoming HTTP traffic (port 80)
+sudo ufw enable # enable the UFW firewall with the rules above
+sudo ufw status verbose # check the status of UFW 
+```
+
+#### Answer the question
+1. The benefit of creating a system user for this task rather than using a regular user or root.
 There are three benefits: enhanced security, separation of concerns and principle of least privilege.
 
 - Enhanced security: since system user has limit privillege, it can reduce the system wide damage.
 - Separation of concerns: system user isolates tasks so it makes logs and processes easier to manage.
 - Principle of least privilege: system user minimizes the attack surface by having only necessary permissions.
 
-Verifying timer, check logs and service execution
+2. Verifying timer, check logs and service execution
 
 ```bash
 sudo systemctl status generate-index.timer # check timer status
@@ -89,19 +106,19 @@ sudo journalctl -u generate-index.service
 # check logs, use --since or --until; these filter the specific period
 ```
 
-Importance of using separate block file
+3. Importance of using separate block file
 
 - Avoiding errors: modifying the main nginx.conf directly increases the risk of breaking entire server
 - Ease of management: individual server block files can be enabled or disabled with symbolic links, simplifying maintenance.
 
-Check nginx status and test nginx configuration
+4. Check nginx status and test nginx configuration
 
 ```bash
 sudo systemctl status nginx # check nginx status
 sudo nginx -t # test nginx configuration
 ```
 
-Check firewall status
+5. Check firewall status
 ```bash
 sudo ufw status verbose # check firewall status
 ```
